@@ -295,7 +295,7 @@ function Productos() {
                                         </p>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex">
                                         <button
                                             onClick={() => setProductoEditar(producto)}
                                             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"

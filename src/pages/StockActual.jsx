@@ -47,7 +47,7 @@ function StockActual() {
         </button>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stock.map((item) => (
           <div key={item.id} className="border p-4 rounded-xl bg-white">
             <h3 className="font-bold">{item.nombre}</h3>

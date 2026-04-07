@@ -116,7 +116,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
 
         <button
@@ -127,20 +127,20 @@ function Dashboard() {
         </button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="bg-white p-6 rounded-2xl shadow">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="rounded-2xl bg-white p-5 shadow">
           <p className="text-sm text-gray-500">Total productos</p>
           <p className="text-2xl font-bold">{totalProductos}</p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="rounded-2xl bg-white p-5 shadow">
           <p className="text-sm text-gray-500">Stock bajo mínimo</p>
           <p className="text-2xl font-bold text-red-600">
             {stockBajo.length}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="rounded-2xl bg-white p-5 shadow">
           <p className="text-sm text-gray-500">Valor inventario</p>
           <p className="text-2xl font-bold text-green-600">
             ${valorInventario.toLocaleString("es-CL")}
@@ -148,7 +148,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl shadow">
+      <div className="rounded-2xl bg-white p-5 shadow">
         <h2 className="text-xl font-semibold mb-4">
           Productos con stock bajo ⚠️
         </h2>
@@ -171,7 +171,7 @@ function Dashboard() {
         )}
       </div>
 
-      <div className="bg-white p-6 rounded-2xl shadow">
+      <div className="rounded-2xl bg-white p-5 shadow">
         <h2 className="text-xl font-semibold mb-4">
           Últimos movimientos
         </h2>
