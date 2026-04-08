@@ -61,7 +61,7 @@ function ProductoForm({ onGuardar, productoEditar, onCancelarEdicion }) {
       stock_minimo: formData.stock_minimo ? Number(formData.stock_minimo) : 0,
       precio_referencia: formData.precio_referencia
         ? Number(formData.precio_referencia)
-        : 0,
+        : null,
     };
 
     await onGuardar(productoData);
@@ -174,7 +174,7 @@ function ProductoForm({ onGuardar, productoEditar, onCancelarEdicion }) {
 
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            Precio referencia
+            Precio referencia(Opcional)
           </label>
           <input
             type="number"
@@ -182,7 +182,7 @@ function ProductoForm({ onGuardar, productoEditar, onCancelarEdicion }) {
             value={formData.precio_referencia}
             onChange={handleChange}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500"
-            placeholder="Ej: 2500"
+            placeholder="Ej: 2500 o dejar vacio"
           />
         </div>
       </div>

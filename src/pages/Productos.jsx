@@ -167,7 +167,7 @@ function Productos() {
             Categoría: producto.categoria || "",
             Unidad: producto.unidad || "",
             "Stock mínimo": producto.stock_minimo || 0,
-            "Precio referencia": producto.precio_referencia || 0,
+            "Precio referencia": producto.precio_referencia ?? "Sin precio",
             Estado: producto.activo ? "Activo" : "Inactivo",
         }));
 
@@ -227,7 +227,7 @@ function Productos() {
 
                         <button
                             onClick={exportarProductos}
-                            className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
                         >
                             Exportar Excel
                         </button>
@@ -298,7 +298,7 @@ function Productos() {
                                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex">
                                         <button
                                             onClick={() => setProductoEditar(producto)}
-                                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
                                         >
                                             Editar
                                         </button>
@@ -306,7 +306,7 @@ function Productos() {
                                         {producto.activo ? (
                                             <button
                                                 onClick={() => desactivarProducto(producto)}
-                                                className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600"
+                                                className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
                                             >
                                                 Desactivar
                                             </button>
@@ -321,7 +321,7 @@ function Productos() {
 
                                         <button
                                             onClick={() => eliminarProducto(producto)}
-                                            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                                            className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700"
                                         >
                                             Eliminar
                                         </button>

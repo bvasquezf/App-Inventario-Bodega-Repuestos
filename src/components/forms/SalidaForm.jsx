@@ -58,7 +58,7 @@ function SalidaForm({ productos, onGuardar }) {
   };
 
   return (
-    <form className="bg-white p-6 rounded-2xl shadow" onSubmit={handleSubmit}>
+    <form className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none" onSubmit={handleSubmit}>
       <h2 className="text-xl font-bold mb-4">Registrar salida</h2>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -112,7 +112,7 @@ function SalidaForm({ productos, onGuardar }) {
         />
       </div>
 
-      <button className="mt-4 bg-red-600 text-white px-4 py-2 rounded">
+      <button className="mt-4 rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 transition-colors">
         {loading ? "Guardando..." : "Registrar salida"}
       </button>
     </form>

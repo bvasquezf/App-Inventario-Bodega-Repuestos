@@ -101,7 +101,7 @@ function EntradaForm({ productos, onGuardar }) {
         </div>
 
         <div>
-          <label className="text-sm text-gray-700">Precio unitario</label>
+          <label className="text-sm text-gray-700">Precio unitario(Segun Factura)</label>
           <input
             type="number"
             name="precio_unitario"
@@ -144,7 +144,7 @@ function EntradaForm({ productos, onGuardar }) {
         </div>
       </div>
 
-      <button className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white">
+      <button className="mt-4 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 transition-colors">
         {loading ? "Guardando..." : "Guardar entrada"}
       </button>
     </form>

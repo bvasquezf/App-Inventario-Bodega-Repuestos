@@ -32,16 +32,13 @@ function Dashboard() {
         destino,
         observacion,
         fecha,
-        productos (
-          nombre,
-          codigo
-        )
+        productos (nombre, codigo)
       `)
       .order("id", { ascending: false });
 
-    console.log("productosError:", productosError);
-    console.log("stockError:", stockError);
-    console.log("movimientosError:", movimientosError);
+    if (productosError) console.error("Error productos:", productosError);
+    if (stockError) console.error("Error stock:", stockError);
+    if (movimientosError) console.error("Error movimientos:", movimientosError);
 
     setProductos(productosData || []);
     setStock(stockData || []);
@@ -55,27 +52,43 @@ function Dashboard() {
 
   const totalProductos = productos.length;
 
+  const productosSinPrecio = productos.filter(
+    (p) =>
+      p.precio_referencia === null ||
+      p.precio_referencia === undefined ||
+      p.precio_referencia === ""
+  );
+
   const stockBajo = stock.filter((item) => {
-    const prod = productos.find((p) => p.id === item.id);
-    return prod && item.stock <= prod.stock_minimo;
+    const producto = productos.find((p) => p.id === item.id);
+    return producto && item.stock <= producto.stock_minimo;
   });
 
   const valorInventario = stock.reduce((total, item) => {
-    const prod = productos.find((p) => p.id === item.id);
-    if (!prod) return total;
-    return total + item.stock * (prod.precio_referencia || 0);
+    const producto = productos.find((p) => p.id === item.id);
+
+    if (
+      !producto ||
+      producto.precio_referencia === null ||
+      producto.precio_referencia === undefined ||
+      producto.precio_referencia === ""
+    ) {
+      return total;
+    }
+
+    return total + item.stock * producto.precio_referencia;
   }, 0);
 
   const exportarReporteMaestro = () => {
-    const productosSheet = productos.map((producto) => ({
-      ID: producto.id,
-      Código: producto.codigo || "",
-      Nombre: producto.nombre || "",
-      Categoría: producto.categoria || "",
-      Unidad: producto.unidad || "",
-      "Stock mínimo": producto.stock_minimo || 0,
-      "Precio referencia": producto.precio_referencia || 0,
-      Estado: producto.activo ? "Activo" : "Inactivo",
+    const productosSheet = productos.map((p) => ({
+      ID: p.id,
+      Código: p.codigo || "",
+      Nombre: p.nombre || "",
+      Categoría: p.categoria || "",
+      Unidad: p.unidad || "",
+      "Stock mínimo": p.stock_minimo || 0,
+      "Precio referencia": p.precio_referencia ?? "Sin precio",
+      Estado: p.activo ? "Activo" : "Inactivo",
     }));
 
     const stockSheet = stock.map((item) => ({
@@ -110,84 +123,153 @@ function Dashboard() {
     );
   };
 
+  const getTipoBadge = (tipo) => {
+    if (tipo === "entrada") return "bg-teal-100 text-teal-700";
+    if (tipo === "salida") return "bg-rose-100 text-rose-700";
+    return "bg-amber-100 text-amber-700";
+  };
+
   if (loading) {
-    return <p className="p-6">Cargando dashboard...</p>;
+    return (
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-xl border border-slate-100 bg-white p-6 text-sm text-slate-500 shadow-sm">
+          Cargando dashboard...
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-slate-800 md:text-3xl">
+          Dashboard
+        </h1>
 
         <button
           onClick={exportarReporteMaestro}
-          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+          className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 md:w-auto"
         >
           Exportar reporte
         </button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-2xl bg-white p-5 shadow">
-          <p className="text-sm text-gray-500">Total productos</p>
-          <p className="text-2xl font-bold">{totalProductos}</p>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            Total productos
+          </p>
+          <p className="mt-1 text-3xl font-semibold text-indigo-600">
+            {totalProductos}
+          </p>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow">
-          <p className="text-sm text-gray-500">Stock bajo mínimo</p>
-          <p className="text-2xl font-bold text-red-600">
+        <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            Stock bajo mínimo
+          </p>
+          <p className="mt-1 text-3xl font-semibold text-rose-500">
             {stockBajo.length}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow">
-          <p className="text-sm text-gray-500">Valor inventario</p>
-          <p className="text-2xl font-bold text-green-600">
-            ${valorInventario.toLocaleString("es-CL")}
+        <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            Valor inventario estimado
+          </p>
+          <p className="mt-1 text-3xl font-semibold text-teal-600">
+            {new Intl.NumberFormat("es-CL", {
+              style: "currency",
+              currency: "CLP",
+              maximumFractionDigits: 0,
+            }).format(valorInventario)}
+          </p>
+          <p className="mt-2 text-xs text-slate-400">
+            Basado solo en productos con precio asignado
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            Productos sin precio
+          </p>
+          <p className="mt-1 text-3xl font-semibold text-amber-500">
+            {productosSinPrecio.length}
           </p>
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white p-5 shadow">
-        <h2 className="text-xl font-semibold mb-4">
-          Productos con stock bajo ⚠️
-        </h2>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-base font-semibold text-slate-700">
+            Productos con stock bajo
+          </h2>
 
-        {stockBajo.length === 0 ? (
-          <p className="text-gray-500">Todo en orden 👍</p>
-        ) : (
-          stockBajo.map((item) => {
-            const prod = productos.find((p) => p.id === item.id);
+          {stockBajo.length === 0 ? (
+            <p className="text-sm text-slate-400">Todo en orden 👍</p>
+          ) : (
+            <div className="divide-y divide-slate-50">
+              {stockBajo.map((item) => {
+                const producto = productos.find((p) => p.id === item.id);
 
-            return (
-              <div key={item.id} className="border-b py-2">
-                <p className="font-medium">{prod?.nombre}</p>
-                <p className="text-sm text-gray-600">
-                  Stock: {item.stock} / Mínimo: {prod?.stock_minimo}
-                </p>
-              </div>
-            );
-          })
-        )}
-      </div>
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between py-3"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">
+                        {producto?.nombre}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Stock actual: {item.stock}
+                      </p>
+                    </div>
 
-      <div className="rounded-2xl bg-white p-5 shadow">
-        <h2 className="text-xl font-semibold mb-4">
-          Últimos movimientos
-        </h2>
-
-        {movimientos.length === 0 ? (
-          <p className="text-gray-500">No hay movimientos visibles.</p>
-        ) : (
-          movimientos.slice(0, 5).map((mov) => (
-            <div key={mov.id} className="border-b py-2">
-              <p className="font-medium">{mov.productos?.nombre}</p>
-              <p className="text-sm text-gray-600">
-                {mov.tipo_movimiento} - Cantidad: {mov.cantidad}
-              </p>
+                    <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-600">
+                      Mínimo: {producto?.stock_minimo}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          ))
-        )}
+          )}
+        </div>
+
+        <div className="rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-base font-semibold text-slate-700">
+            Últimos movimientos
+          </h2>
+
+          {movimientos.length === 0 ? (
+            <p className="text-sm text-slate-400">No hay movimientos visibles.</p>
+          ) : (
+            <div className="divide-y divide-slate-50">
+              {movimientos.slice(0, 5).map((mov) => (
+                <div key={mov.id} className="flex items-center gap-3 py-3">
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${getTipoBadge(
+                      mov.tipo_movimiento
+                    )}`}
+                  >
+                    {mov.tipo_movimiento}
+                  </span>
+
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-700">
+                      {mov.productos?.nombre}
+                    </p>
+                    <p className="text-xs text-slate-400">{mov.fecha}</p>
+                  </div>
+
+                  <span className="text-sm font-medium text-slate-500">
+                    ×{mov.cantidad}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
